@@ -5,9 +5,7 @@ namespace QueryProcessor.Operations
 {
     internal class CreateTable
     {
-        internal OperationStatus Execute()
-        {
-            return Store.GetInstance().CreateTable();
+        // Execute method with table name and column definitions
         internal OperationStatus Execute(string tableName, string columnDefinitions)
         {
             // Validate table name
@@ -22,7 +20,7 @@ namespace QueryProcessor.Operations
                 return OperationStatus.InvalidColumnDefinitions;
             }
 
-            // Check if table already exists in the catalog
+            // Check if the table already exists in the catalog
             if (Store.GetInstance().TableExists(tableName))
             {
                 return OperationStatus.TableAlreadyExists;
@@ -38,7 +36,15 @@ namespace QueryProcessor.Operations
             }
 
             return createStatus;
+        }
 
+        // If you still need a method without parameters, you can add one with different logic
+        internal OperationStatus Execute()
+        {
+            string defaultTableName = "DefaultTable"; // Asigna un nombre predeterminado o usa uno dinámico
+            string defaultColumnDefinitions = "Column1;Column2"; // Definiciones predeterminadas
+
+            return Execute(defaultTableName, defaultColumnDefinitions);
         }
     }
 }

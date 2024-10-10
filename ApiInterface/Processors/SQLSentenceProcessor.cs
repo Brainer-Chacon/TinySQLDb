@@ -5,13 +5,27 @@ using QueryProcessor;
 
 namespace ApiInterface.Processors
 {
-    internal class SQLSentenceProcessor(Request request) : IProcessor 
+    internal class SQLSentenceProcessor : IProcessor
     {
-        public Request Request { get; } = request;
+        public Request Request { get; }
 
+        // Constructor
+        public SQLSentenceProcessor(Request request)
+        {
+            Request = request;
+        }
+
+        // Implementación del método Process sin parámetros de IProcessor
         public Response Process()
         {
-            var sentence = this.Request.RequestBody;
+            // Lógica para el caso sin parámetros, quizás puedas lanzar una excepción o retornar un error
+            throw new NotImplementedException("Este método no está implementado.");
+        }
+
+        // Implementación del método Process que acepta un parámetro Request
+        public Response Process(Request request)
+        {
+            var sentence = request.RequestBody; // Usar el argumento
             var result = SQLQueryProcessor.Execute(sentence);
             var response = this.ConvertToResponse(result);
             return response;

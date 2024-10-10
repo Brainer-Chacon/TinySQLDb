@@ -9,16 +9,8 @@ namespace QueryProcessor
     {
         public static OperationStatus Execute(string sentence)
         {
-            /// The following is example code. Parser should be called
-            /// on the sentence to understand and process what is requested
-            if (sentence.StartsWith("CREATE TABLE"))
-            {
-                return new CreateTable().Execute();
-            }
-            if (sentence.StartsWith("SELECT"))
-            {
-                return new Select().Execute();
-            // Determine the type of SQL statement and execute the corresponding operation
+            // The following is example code. Parser should be called
+            // on the sentence to understand and process what is requested
             if (sentence.StartsWith("CREATE TABLE"))
             {
                 // Extract table name and column definitions
@@ -42,7 +34,7 @@ namespace QueryProcessor
                 // Extract table name and condition
                 var parts = sentence.Substring(6).Trim().Split(" FROM ");
                 if (parts.Length < 2) throw new InvalidSQLFormatException();
-                string condition = parts.Length > 1 ? parts[1].Trim() : null;
+                string condition = parts.Length > 1 ? parts[1].Trim() : "";
                 string tableName = parts[0].Trim();
                 return new Select().Execute(tableName, condition);
             }
@@ -53,7 +45,7 @@ namespace QueryProcessor
                 if (parts.Length < 2) throw new InvalidSQLFormatException();
                 string tableName = parts[0].Trim();
                 string setClause = parts[1].Trim();
-                string condition = ""; // You might want to extract the condition as well
+                string condition = ""; // Extract condition if needed
                 if (setClause.Contains(" WHERE "))
                 {
                     var setParts = setClause.Split(" WHERE ");
@@ -68,7 +60,7 @@ namespace QueryProcessor
                 var parts = sentence.Substring(6).Trim().Split(" FROM ");
                 if (parts.Length < 2) throw new InvalidSQLFormatException();
                 string tableName = parts[0].Trim();
-                string condition = parts.Length > 1 ? parts[1].Trim() : null;
+                string condition = parts.Length > 1 ? parts[1].Trim() : "";
                 return new Delete().Execute(tableName, condition);
             }
             else
@@ -76,6 +68,6 @@ namespace QueryProcessor
                 throw new UnknownSQLSentenceException();
             }
         }
+
     }
-}
 }

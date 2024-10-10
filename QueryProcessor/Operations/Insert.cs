@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-﻿using Entities;
+using Entities;
 using StoreDataManager;
 
 namespace QueryProcessor.Operations
@@ -22,7 +22,7 @@ namespace QueryProcessor.Operations
             var parsedValues = ParseValues(values);
             if (parsedValues == null || parsedValues.Length == 0)
             {
-                return OperationStatus.InvalidValues;
+                return OperationStatus.InvalidValues; // Verifica que este valor esté en la enumeración
             }
 
             // Insert values into the table

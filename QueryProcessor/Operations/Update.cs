@@ -17,7 +17,7 @@ namespace QueryProcessor.Operations
             var setValues = ParseSetClause(setClause);
             if (setValues == null || setValues.Length == 0)
             {
-                return OperationStatus.InvalidSetClause;
+                return OperationStatus.InvalidSetClause; // Verifica que este valor esté en la enumeración
             }
 
             // Perform the update operation

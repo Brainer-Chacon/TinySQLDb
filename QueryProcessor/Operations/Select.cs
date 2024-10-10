@@ -10,23 +10,24 @@ namespace QueryProcessor.Operations
 {
     internal class Select
     {
-        public OperationStatus Execute()
+        // Execute method without parameters - modify this method to include default parameters
+        public OperationStatus Execute(string tableName = "", string condition = "")
         {
-            // This is only doing the query but not returning results.
-            return Store.GetInstance().Select();
-        internal OperationStatus Execute(string tableName, string condition = null)
-        {
-            // Validate table existence
-            if (!Store.GetInstance().TableExists(tableName))
+            // Validate table existence if tableName is provided
+            if (!string.IsNullOrEmpty(tableName) && !Store.GetInstance().TableExists(tableName))
             {
                 return OperationStatus.TableNotFound;
+            }
+
+            // If no table name is provided, you might want to return an error or handle it appropriately
+            if (string.IsNullOrEmpty(tableName))
+            {
+                return OperationStatus.InvalidTableName; // Assumes this status exists
             }
 
             // Read data from the table and apply conditions if provided
             return Store.GetInstance().Select(tableName, condition);
         }
-
     }
-    
-    }
+}
 

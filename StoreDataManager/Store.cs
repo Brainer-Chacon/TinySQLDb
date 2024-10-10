@@ -92,7 +92,7 @@ namespace StoreDataManager
             return File.Exists(tablePath);
         }
 
-        public OperationStatus Select(string tableName, string condition = null)
+        public OperationStatus Select(string tableName, string condition = "")
         {
             // Check if the table exists
             if (!TableExists(tableName))

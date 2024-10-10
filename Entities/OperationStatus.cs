@@ -6,6 +6,10 @@
         TableNotFound,
         InvalidColumnDefinitions,
         Error,
-        Warning 
+        Warning,
+        InvalidTableName,
+        TableAlreadyExists,
+        InvalidSetClause,
+        InvalidValues,
     }
 }
