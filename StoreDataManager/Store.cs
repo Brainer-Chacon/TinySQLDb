@@ -13,6 +13,20 @@ namespace StoreDataManager
         private static Store? instance = null; // Instancia Singleton
         private static readonly object _lock = new object(); // Lock para hilos
 
+
+        public static Store GetInstance()
+        {
+            lock (_lock)
+            {
+                if (instance == null)
+                {
+                    instance = new Store();
+                }
+                return instance;
+            }
+        }
+
+
         private const string DatabaseBasePath = @"C:\TinySql\"; // Ruta base para las bases de datos
         private const string SystemCatalogPath = $@"{DatabaseBasePath}SystemCatalog"; // Ruta del catálogo del sistema
         public const string SystemDatabasesFile = $@"{SystemCatalogPath}\SystemDatabases.table"; // Archivo de bases de datos
