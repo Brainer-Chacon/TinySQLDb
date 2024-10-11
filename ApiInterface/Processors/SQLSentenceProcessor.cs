@@ -5,9 +5,12 @@ using QueryProcessor;
 
 namespace ApiInterface.Processors
 {
+
+    /// Procesador de sentencias SQL.
+
     internal class SQLSentenceProcessor : IProcessor
     {
-        public Request Request { get; }
+        public Request Request { get; } // Propiedad que almacena la solicitud
 
         // Constructor principal que inicializa la propiedad Request
         public SQLSentenceProcessor(Request request)
@@ -18,27 +21,33 @@ namespace ApiInterface.Processors
         // Implementación del método Process sin parámetros
         public Response Process()
         {
-            throw new NotImplementedException("Este método no está implementado.");
+            throw new NotImplementedException("Este método no está implementado."); // Método no implementado
         }
 
         // Implementación del método Process que acepta un parámetro Request
         public Response Process(Request request)
         {
-            var sentence = request.RequestBody;
-            var result = SQLQueryProcessor.Execute(sentence);
-            var response = this.ConvertToResponse(result);
-            return response;
+            var sentence = request.RequestBody; // Extrae el cuerpo de la solicitud
+            var result = SQLQueryProcessor.Execute(sentence); // Ejecuta la consulta SQL
+            var response = this.ConvertToResponse(result); // Convierte el resultado a una respuesta
+            return response; // Devuelve la respuesta procesada
         }
+
+
+        /// Convierte el estado de operación en un objeto Response.
 
         private Response ConvertToResponse(OperationStatus result)
         {
             return new Response
             {
-                Status = result,
-                Request = this.Request,
-                ResponseBody = string.Empty
+                Status = result, // Estado de la operación
+                Request = this.Request, // Solicitud original
+                ResponseBody = string.Empty // Cuerpo de la respuesta vacío
             };
         }
+
+
+        /// Maneja una solicitud SQL y devuelve una respuesta.
 
         public Response HandleSqlRequest(string sqlQuery)
         {
@@ -53,8 +62,5 @@ namespace ApiInterface.Processors
 
             return response; // Devuelve la respuesta procesada
         }
-
-
-
     }
 }

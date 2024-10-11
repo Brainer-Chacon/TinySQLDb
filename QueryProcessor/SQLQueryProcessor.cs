@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿// SQLQueryProcessor.cs
+using Entities;
 using QueryProcessor.Exceptions;
 using QueryProcessor.Operations;
 using StoreDataManager;
@@ -6,9 +7,15 @@ using System.IO;
 
 namespace QueryProcessor
 {
+
+    /// Procesador para manejar y ejecutar sentencias SQL.
+
     public class SQLQueryProcessor
     {
-        private static string currentDatabase = string.Empty;
+        private static string currentDatabase = string.Empty; // Base de datos actual
+
+  
+        /// Ejecuta una sentencia SQL dada.
 
         public static OperationStatus Execute(string sentence)
         {
@@ -71,9 +78,12 @@ namespace QueryProcessor
             }
             else
             {
-                throw new UnknownSQLSentenceException();
+                throw new UnknownSQLSentenceException(); // Lanza excepción si la sentencia no es válida
             }
         }
+
+
+        /// Crea una nueva base de datos con el nombre especificado.
 
         private static OperationStatus CreateDatabase(string databaseName)
         {
@@ -81,21 +91,23 @@ namespace QueryProcessor
             if (!Directory.Exists(databasePath))
             {
                 Directory.CreateDirectory(databasePath);
-                File.AppendAllText(Store.SystemDatabasesFile, $"{databaseName}\n"); // Acceso correcto a la propiedad estática
+                File.AppendAllText(Store.SystemDatabasesFile, $"{databaseName}\n"); // Registra la base de datos
                 return OperationStatus.Success;
             }
-            return OperationStatus.TableAlreadyExists;
+            return OperationStatus.TableAlreadyExists; // Devuelve estado de existencia
         }
+
+
+        /// Establece el contexto de la base de datos actual.
 
         private static OperationStatus SetDatabaseContext(string databaseName)
         {
             if (Store.GetInstance().DatabaseExists(databaseName))
             {
-                currentDatabase = databaseName;
+                currentDatabase = databaseName; // Actualiza la base de datos actual
                 return OperationStatus.Success;
             }
-            return OperationStatus.TableNotFound;
+            return OperationStatus.TableNotFound; // Devuelve estado de no encontrado
         }
-
     }
 }

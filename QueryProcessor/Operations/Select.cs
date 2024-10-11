@@ -1,33 +1,33 @@
-﻿using Entities;
+﻿// Select.cs
+using Entities;
 using StoreDataManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QueryProcessor.Operations
 {
+
+    /// Clase para manejar operaciones de selección de registros en una tabla.
+
     internal class Select
     {
-        // Execute method without parameters - modify this method to include default parameters
+
+        /// Ejecuta la operación de selección sobre la tabla especificada.
+ 
         public OperationStatus Execute(string tableName = "", string condition = "")
         {
-            // Validate table existence if tableName is provided
+            // Validar existencia de la tabla si se proporciona el nombre
             if (!string.IsNullOrEmpty(tableName) && !Store.GetInstance().TableExists(tableName))
             {
-                return OperationStatus.TableNotFound;
+                return OperationStatus.TableNotFound; // Devuelve estado de no encontrado
             }
 
-            // If no table name is provided, you might want to return an error or handle it appropriately
+            // Si no se proporciona un nombre de tabla, se podría devolver un error o manejarlo apropiadamente
             if (string.IsNullOrEmpty(tableName))
             {
-                return OperationStatus.InvalidTableName; // Assumes this status exists
+                return OperationStatus.InvalidTableName; // Asume que este estado existe
             }
 
-            // Read data from the table and apply conditions if provided
+            // Leer datos de la tabla y aplicar condiciones si se proporciona
             return Store.GetInstance().Select(tableName, condition);
         }
     }
 }
-

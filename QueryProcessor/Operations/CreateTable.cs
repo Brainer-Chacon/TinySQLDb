@@ -1,44 +1,51 @@
-﻿using Entities;
+﻿// CreateTable.cs
+using Entities;
 using StoreDataManager;
 
 namespace QueryProcessor.Operations
 {
+
+    /// Clase para manejar operaciones de creación de tablas.
+
     internal class CreateTable
     {
-        // Execute method with table name and column definitions
+
+        /// Ejecuta la operación de creación de una tabla con el nombre y definiciones de columnas.
+
         internal OperationStatus Execute(string tableName, string columnDefinitions)
         {
-            // Validate table name
+            // Validar nombre de la tabla
             if (string.IsNullOrWhiteSpace(tableName))
             {
-                return OperationStatus.InvalidTableName;
+                return OperationStatus.InvalidTableName; // Devuelve estado de nombre de tabla inválido
             }
 
-            // Validate column definitions
+            // Validar definiciones de columnas
             if (string.IsNullOrWhiteSpace(columnDefinitions))
             {
-                return OperationStatus.InvalidColumnDefinitions;
+                return OperationStatus.InvalidColumnDefinitions; // Devuelve estado de definiciones de columnas inválidas
             }
 
-            // Check if the table already exists in the catalog
+            // Verificar si la tabla ya existe en el catálogo
             if (Store.GetInstance().TableExists(tableName))
             {
-                return OperationStatus.TableAlreadyExists;
+                return OperationStatus.TableAlreadyExists; // Devuelve estado de existencia
             }
 
-            // Create the table in the database
+            // Crea la tabla en la base de datos
             var createStatus = Store.GetInstance().CreateTable(tableName, columnDefinitions);
 
-            // Optionally, log this operation in the system catalog
+            // Opcionalmente, registra esta operación en el catálogo del sistema
             if (createStatus == OperationStatus.Success)
             {
                 Store.GetInstance().LogTableCreation(tableName, columnDefinitions);
             }
 
-            return createStatus;
+            return createStatus; // Devuelve el estado de la creación
         }
 
-        // If you still need a method without parameters, you can add one with different logic
+
+
         internal OperationStatus Execute()
         {
             string defaultTableName = "DefaultTable"; // Asigna un nombre predeterminado o usa uno dinámico
