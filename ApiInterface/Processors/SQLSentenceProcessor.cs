@@ -5,9 +5,7 @@ using QueryProcessor;
 
 namespace ApiInterface.Processors
 {
-
     /// Procesador de sentencias SQL.
-
     internal class SQLSentenceProcessor : IProcessor
     {
         public Request Request { get; } // Propiedad que almacena la solicitud
@@ -33,22 +31,17 @@ namespace ApiInterface.Processors
             return response; // Devuelve la respuesta procesada
         }
 
-
         /// Convierte el estado de operación en un objeto Response.
-
         private Response ConvertToResponse(OperationStatus result)
         {
-            return new Response
-            {
-                Status = result, // Estado de la operación
-                Request = this.Request, // Solicitud original
-                ResponseBody = string.Empty // Cuerpo de la respuesta vacío
-            };
+            return new Response(
+                Request, // Asegúrate de que Request esté inicializado
+                result, // Estado de la operación
+                string.Empty // Cuerpo de la respuesta vacío
+            );
         }
 
-
         /// Maneja una solicitud SQL y devuelve una respuesta.
-
         public Response HandleSqlRequest(string sqlQuery)
         {
             // Crea el objeto Request

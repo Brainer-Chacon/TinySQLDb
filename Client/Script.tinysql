@@ -1,0 +1,10 @@
+CREATE DATABASE TestDB;
+SET DATABASE TestDB;
+CREATE TABLE Estudiantes (
+    ID INT,
+    Nombre VARCHAR(100),
+    Apellido VARCHAR(100)
+);
+INSERT INTO Estudiantes VALUES (1, 'Juan', 'Pérez');
+INSERT INTO Estudiantes VALUES (2, 'María', 'González');
+SELECT * FROM Estudiantes;

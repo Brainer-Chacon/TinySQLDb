@@ -3,7 +3,9 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$IP,  # Dirección IP del servidor
     [Parameter(Mandatory = $true)]
-    [int]$Port    # Puerto del servidor
+    [int]$Port,    # Puerto del servidor
+    [Parameter(Mandatory = $true)]
+    [string]$QueryFile  # Ruta del archivo SQL
 )
 
 # Define la función principal para ejecutar consultas SQL desde un archivo
@@ -73,9 +75,17 @@ function Execute-MyQuery {
         param (
             [string]$command  # Comando SQL a enviar
         )
-        # Crea un nuevo socket para conectarse al servidor
-        $client = New-Object System.Net.Sockets.Socket($ipEndPoint.AddressFamily, [System.Net.Sockets.SocketType]::Stream, [System.Net.Sockets.ProtocolType]::Tcp)
-        $client.Connect($ipEndPoint)  # Conecta al servidor
+        
+        # Manejo de excepciones al intentar conectar
+        try {
+            # Crea un nuevo socket para conectarse al servidor
+            $client = New-Object System.Net.Sockets.Socket($ipEndPoint.AddressFamily, [System.Net.Sockets.SocketType]::Stream, [System.Net.Sockets.ProtocolType]::Tcp)
+            $client.Connect($ipEndPoint)  # Conecta al servidor
+        }
+        catch {
+            Write-Error "No se pudo establecer conexión: $_"
+            return $null
+        }
 
         # Crea el objeto de solicitud que se enviará
         $requestObject = [PSCustomObject]@{
@@ -85,11 +95,20 @@ function Execute-MyQuery {
 
         # Convierte el objeto de solicitud a formato JSON
         $jsonMessage = ConvertTo-Json -InputObject $requestObject -Compress
-        Send-Message -client $client -message $jsonMessage  # Envía el mensaje al servidor
-        $response = Receive-Message -client $client  # Recibe la respuesta del servidor
-
-        $client.Shutdown([System.Net.Sockets.SocketShutdown]::Both)  # Cierra la conexión
-        $client.Close()  # Cierra el socket
+        
+        # Manejo de excepciones al enviar y recibir mensajes
+        try {
+            Send-Message -client $client -message $jsonMessage  # Envía el mensaje al servidor
+            $response = Receive-Message -client $client  # Recibe la respuesta del servidor
+        }
+        catch {
+            Write-Error "Error al enviar o recibir datos: $_"
+            return $null
+        }
+        finally {
+            $client.Shutdown([System.Net.Sockets.SocketShutdown]::Both)  # Cierra la conexión
+            $client.Close()  # Cierra el socket
+        }
 
         return $response;  # Devuelve la respuesta del servidor
     }
@@ -120,5 +139,6 @@ function Execute-MyQuery {
     }
 }
 
-# Ejemplo de uso:
-# Execute-MyQuery -QueryFile ".\Script.tinysql" -IP "10.0.0.2" -Port 8000
+# Llama a la función Execute-MyQuery al final del script
+Execute-MyQuery -QueryFile $QueryFile -IP $IP -Port $Port
+
