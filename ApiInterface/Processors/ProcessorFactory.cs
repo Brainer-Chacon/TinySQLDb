@@ -1,18 +1,13 @@
 ﻿using ApiInterface.Exceptions;
 using ApiInterface.InternalModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApiInterface.Processors
 {
-    internal class ProcessorFactory
+    internal static class ProcessorFactory // Asegúrate de que sea una clase
     {
-        internal static IProcessor Create(Request request)
+        internal static IProcessor Create(Request request) // Agrega el modificador de acceso
         {
-            if (request.RequestType is RequestType.SQLSentence)
+            if (request.RequestType == RequestType.SQLSentence) // Usa comparación correcta
             {
                 return new SQLSentenceProcessor(request);
             }

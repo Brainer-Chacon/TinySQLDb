@@ -9,23 +9,22 @@ namespace ApiInterface.Processors
     {
         public Request Request { get; }
 
-        // Constructor
+        // Constructor principal que inicializa la propiedad Request
         public SQLSentenceProcessor(Request request)
         {
-            Request = request;
+            Request = request ?? throw new ArgumentNullException(nameof(request)); // Asegúrate de que no sea nulo
         }
 
-        // Implementación del método Process sin parámetros de IProcessor
+        // Implementación del método Process sin parámetros
         public Response Process()
         {
-            // Lógica para el caso sin parámetros, quizás puedas lanzar una excepción o retornar un error
             throw new NotImplementedException("Este método no está implementado.");
         }
 
         // Implementación del método Process que acepta un parámetro Request
         public Response Process(Request request)
         {
-            var sentence = request.RequestBody; // Usar el argumento
+            var sentence = request.RequestBody;
             var result = SQLQueryProcessor.Execute(sentence);
             var response = this.ConvertToResponse(result);
             return response;
@@ -40,5 +39,22 @@ namespace ApiInterface.Processors
                 ResponseBody = string.Empty
             };
         }
+
+        public Response HandleSqlRequest(string sqlQuery)
+        {
+            // Crea el objeto Request
+            Request request = new Request(sqlQuery, RequestType.SQLSentence); // Asegúrate de que el constructor esté correctamente definido
+
+            // Crea el procesador de sentencia SQL
+            SQLSentenceProcessor processor = new SQLSentenceProcessor(request);
+
+            // Procesa la solicitud
+            Response response = processor.Process(request);
+
+            return response; // Devuelve la respuesta procesada
+        }
+
+
+
     }
 }

@@ -1,14 +1,19 @@
 ﻿namespace ApiInterface.InternalModels
 {
-    internal enum RequestType 
-    { 
+    public enum RequestType // Cambiado a public
+    {
         SQLSentence = 0
     }
 
-    internal class Request
+    public class Request
     {
-        public required RequestType RequestType { get; set; } 
+        public string RequestBody { get; set; }
+        public RequestType RequestType { get; set; } // Esto está bien
 
-        public required string RequestBody { get; set; }
+        public Request(string requestBody, RequestType requestType)
+        {
+            RequestBody = requestBody;
+            RequestType = requestType;
+        }
     }
 }

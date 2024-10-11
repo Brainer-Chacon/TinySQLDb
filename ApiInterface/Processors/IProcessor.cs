@@ -13,5 +13,6 @@ namespace ApiInterface.Processors
         Response Process();
         Response Process(Request request);
     }
+
 }
 

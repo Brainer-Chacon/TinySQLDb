@@ -22,41 +22,55 @@ namespace StoreDataManager
         }
 
         private const string DatabaseBasePath = @"C:\TinySql\";
-        private const string DataPath = $@"{DatabaseBasePath}Data";
-        private const string SystemCatalogPath = $@"{DataPath}SystemCatalog";
-        private const string SystemDatabasesFile = $@"{SystemCatalogPath}SystemDatabases.table";
-        private const string SystemTablesFile = $@"{SystemCatalogPath}SystemTables.table";
+        private const string SystemCatalogPath = $@"{DatabaseBasePath}SystemCatalog";
+        public const string SystemDatabasesFile = $@"{SystemCatalogPath}\SystemDatabases.table"; // Propiedad pública para acceder
+        private const string SystemTablesFile = $@"{SystemCatalogPath}\SystemTables.table";
+
+        public string DataPath => Path.Combine(DatabaseBasePath, "Data"); // Propiedad pública para DataPath
 
         public Store()
         {
-            this.InitializeSystemCatalog();
+            InitializeSystemCatalog();
         }
 
         private void InitializeSystemCatalog()
         {
-            // Ensure that the system catalog directory exists
             Directory.CreateDirectory(SystemCatalogPath);
-            // Create the SystemTables file if it doesn't exist
             if (!File.Exists(SystemTablesFile))
             {
                 File.Create(SystemTablesFile).Dispose();
             }
         }
 
+        public OperationStatus CreateDatabase(string databaseName)
+        {
+            string databasePath = Path.Combine(DataPath, databaseName);
+            if (!Directory.Exists(databasePath))
+            {
+                Directory.CreateDirectory(databasePath);
+                File.AppendAllText(SystemDatabasesFile, $"{databaseName}\n");
+                return OperationStatus.Success;
+            }
+            return OperationStatus.TableAlreadyExists;
+        }
+
+        public bool DatabaseExists(string databaseName)
+        {
+            string databasePath = Path.Combine(DataPath, databaseName);
+            return Directory.Exists(databasePath);
+        }
+
         public OperationStatus CreateTable(string tableName, string columnDefinitions)
         {
-            // Create the directory for the new table if it doesn't exist
             if (string.IsNullOrWhiteSpace(tableName))
             {
                 return OperationStatus.InvalidColumnDefinitions;
             }
 
-            // Create the table file
             string tableDirectory = Path.Combine(DataPath, "TESTDB");
             Directory.CreateDirectory(tableDirectory);
             string tablePath = Path.Combine(tableDirectory, $"{tableName}.Table");
 
-            // Parse the column definitions
             var columns = ParseColumnDefinitions(columnDefinitions);
             if (columns == null || columns.Length == 0)
             {
@@ -66,35 +80,30 @@ namespace StoreDataManager
             using (FileStream stream = File.Open(tablePath, FileMode.OpenOrCreate))
             using (BinaryWriter writer = new(stream))
             {
-                // Write column definitions and initial data to the file
                 foreach (var column in columns)
                 {
                     writer.Write(column);
                 }
             }
 
-            // Log the table creation
             LogTableCreation(tableName, columnDefinitions);
             return OperationStatus.Success;
         }
 
         public void LogTableCreation(string tableName, string columnDefinitions)
         {
-            // Log the table creation in the system catalog
             string logEntry = $"{tableName};{columnDefinitions};{DateTime.Now}\n";
             File.AppendAllText(SystemTablesFile, logEntry);
         }
 
         public bool TableExists(string tableName)
         {
-            // Check if the table file exists in the system catalog
             string tablePath = Path.Combine(DataPath, "TESTDB", $"{tableName}.Table");
             return File.Exists(tablePath);
         }
 
         public OperationStatus Select(string tableName, string condition = "")
         {
-            // Check if the table exists
             if (!TableExists(tableName))
             {
                 return OperationStatus.TableNotFound;
@@ -102,7 +111,6 @@ namespace StoreDataManager
 
             string tablePath = Path.Combine(DataPath, "TESTDB", $"{tableName}.Table");
 
-            // Read data from the table file
             using (FileStream stream = File.Open(tablePath, FileMode.Open))
             using (BinaryReader reader = new(stream))
             {
@@ -112,7 +120,6 @@ namespace StoreDataManager
                     string nombre = reader.ReadString();
                     string apellido = reader.ReadString();
 
-                    // Apply condition if specified
                     if (string.IsNullOrEmpty(condition) || EvaluateCondition(id, nombre, apellido, condition))
                     {
                         Console.WriteLine($"ID: {id}, Nombre: {nombre}, Apellido: {apellido}");
@@ -131,16 +138,14 @@ namespace StoreDataManager
             }
             if (condition.StartsWith("Nombre LIKE"))
             {
-                string value = condition.Split("LIKE")[1].Trim().Trim('"'); // Cambiar de ' a "
+                string value = condition.Split("LIKE")[1].Trim().Trim('"');
                 return nombre.Contains(value);
             }
-            return true; // Default to true if no valid condition is found
+            return true;
         }
-
 
         public OperationStatus InsertIntoTable(string tableName, string[] values)
         {
-            // Check if the table exists
             if (!TableExists(tableName))
             {
                 return OperationStatus.TableNotFound;
